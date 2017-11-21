@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HLC Hilos</string>
+    <string name="b1">Comenzar Contador</string>
+    <string name="b2">Parar Contador</string>
+</resources>
