@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     TextView contador;
     Button comenzar, parar;
     ProgressBar barra;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
         comenzar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 new MiTarea().execute(Integer.parseInt(contador.getText().toString()));
+
             }
         });
 
@@ -43,15 +46,16 @@ public class MainActivity extends AppCompatActivity {
         //Este metodo preparatodo antes de la creacion del hilo
         protected void onPreExecute() {
 //Le ponemos el maximo a la barra
-            barra.setMax(1000);
+            barra.setMax(10);
 //Aqui le ponemos la funcionalidad al boton porque antes no tendría sentido si no existe hilo al que parar
-            //se podria hacer con setOnclick o con OnCancelled()
+            comenzar.setClickable(false);
             parar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     MiTarea.this.cancel(true);
                     contador.setText(Integer.toString(0));
                     barra.setProgress(0);
+                    comenzar.setClickable(true);
                 }
             });
 
@@ -61,14 +65,16 @@ public class MainActivity extends AppCompatActivity {
         //Este metodo lo haria en segundo plano y va devolviendo al principal ne cada itineracion
         protected Integer doInBackground(Integer... integers) {
             int resultado=0;
-            for(int i=integers[0];i<=1000;i++){
-                if(isCancelled())
+            for(int i=integers[0];i<=10;i++){
+                if(this.isCancelled()){
                     break;
+                }
                 resultado=i;
                 publishProgress(resultado);
 
                     SystemClock.sleep(500);
             }
+
             return resultado;
         }
         @Override
@@ -77,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
             contador.setText(Integer.toString(porc[0]));
             barra.setProgress(porc[0]);
             }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            comenzar.setClickable(true);
+
+        }
 
         //@Override
     /*    protected void onCancelled() {
